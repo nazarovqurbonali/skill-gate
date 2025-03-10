@@ -1,6 +1,6 @@
 namespace Infrastructure.ImplementationContract.Repositories.NpgsqlCommands;
 
-public static class UserSqlCommands
+public static class UserNpgsqlCommands
 {
     public const string InsertUser = @"
         INSERT INTO users (
@@ -38,6 +38,4 @@ public static class UserSqlCommands
 
     public const string GetAllUsers = @"
         SELECT * FROM users";
-
-    public const string GetAllUsersWithFilter = @"";
 }

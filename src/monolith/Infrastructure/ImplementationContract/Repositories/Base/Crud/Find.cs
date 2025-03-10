@@ -12,8 +12,10 @@ public sealed class Find<T> : IFind<T> where T : BaseEntity
         throw new NotImplementedException();
     }
 
-    public async Task<Result<IEnumerable<T>>> GetAllAsync(BaseFilter filter, CancellationToken token = default)
+    public async Task<Result<IEnumerable<T>>> GetAllAsync(string query, CancellationToken token = default)
     {
         throw new NotImplementedException();
     }
+
+   
 }
