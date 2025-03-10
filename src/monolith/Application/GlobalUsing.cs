@@ -1,5 +1,6 @@
 global using System;
 global using MimeKit;
+global using System.Text;
 global using System.Linq;
 global using MimeKit.Text;
 global using Domain.Common;
@@ -9,6 +10,7 @@ global using System.Threading.Tasks;
 global using System.Linq.Expressions;
 global using Microsoft.AspNetCore.Http;
 global using Microsoft.Extensions.Logging;
+global using System.Security.Cryptography;
 global using Microsoft.Extensions.Options;
 global using Application.Extensions.Filters;
 global using Application.DTOs.Identity.Responses;

@@ -2,7 +2,7 @@ namespace Infrastructure.Extensions;
 
 public static class Npgsql
 {
-    public static async Task<NpgsqlConnection> CreateConnection(
+    public static async Task<NpgsqlConnection> CreateConnectionAsync(
         IConfiguration configuration,
         string connectionStringName)
     {

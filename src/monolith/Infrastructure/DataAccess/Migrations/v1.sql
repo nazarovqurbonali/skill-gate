@@ -1,5 +1,7 @@
 drop database skill_gate_db;
 
+\skill_gate_db;
+
 CREATE DATABASE skill_gate_db;
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
