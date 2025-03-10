@@ -2,17 +2,14 @@ namespace Application.Extensions.ResultPattern;
 
 public sealed class Result<T> : BaseResult
 {
-    public T? Value { get; }
+    public T? Value { get; init; }
 
-    private Result(bool isSuccess, int? code, string? message, ErrorType errorType, T? value, List<string>? errors = null)
-        : base(isSuccess, code, message, errorType, errors)
+    private Result(bool isSuccess, ResultPatternError error, T? value) : base(isSuccess, error)
     {
         Value = value;
     }
 
-    public static Result<T> Success(T value, string message = "Success") =>
-        new(true, 200, message, ErrorType.None, value);
+    public static Result<T> Success(T? value=default) => new(true, ResultPatternError.None(), value);
 
-    public new static Result<T> Failure(ResultPatternError error) =>
-        new(false, error.Code, error.Message, error.ErrorType, default, error.Details);
+    public static Result<T> Failure(ResultPatternError error, T value=default!) => new(false, error, value);
 }

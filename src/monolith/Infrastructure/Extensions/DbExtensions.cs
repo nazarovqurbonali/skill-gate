@@ -10,7 +10,7 @@ public static class DbExtensions
     }
 
 
-    public static object ToDbValue(this object value)
+    public static object ToDbValue(this object? value)
     {
         return value ?? DBNull.Value;
     }

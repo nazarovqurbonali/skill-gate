@@ -1,6 +1,19 @@
 namespace Infrastructure.ImplementationContract.Repositories.Base.Crud;
 
-public class Find
+public sealed class Find<T> : IFind<T> where T : BaseEntity
 {
-    
+    public async Task<Result<T?>> GetByIdAsync(Guid id, CancellationToken token = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<Result<IEnumerable<T>>> GetAllAsync(CancellationToken token = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<Result<IEnumerable<T>>> GetAllAsync(BaseFilter filter, CancellationToken token = default)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -18,7 +18,7 @@ public sealed class EmailService(
             BaseResult connectResult = await smtpClientWrapper.ConnectAsync();
             if (!connectResult.IsSuccess)
             {
-                logger.LogError("Failed to connect to SMTP server: {ErrorMessage}", connectResult.Message);
+                logger.LogError("Failed to connect to SMTP server: {ErrorMessage}", connectResult.Error.Message);
                 return connectResult;
             }
 
@@ -26,8 +26,7 @@ public sealed class EmailService(
             BaseResult sendResult = await smtpClientWrapper.SendMessageAsync(emailMessage);
             if (!sendResult.IsSuccess)
             {
-                logger.LogError("Failed to send email message to {ToEmail}: {ErrorMessage}", toEmail,
-                    sendResult.Message);
+                logger.LogError($"Failed to send email message to {toEmail}: {sendResult.Error.Message}");
                 return sendResult;
             }
 

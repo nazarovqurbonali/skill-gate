@@ -1,8 +1,15 @@
 global using Npgsql;
+global using Domain.Enums;
+global using Domain.Common;
 global using Domain.Entities;
 global using Domain.Constants;
 global using Infrastructure.Extensions;
 global using Microsoft.Extensions.Logging;
 global using Application.Extensions.Algorithms;
 global using Microsoft.Extensions.Configuration;
-
+global using Application.Contracts.Repositories;
+global using Application.Extensions.ResultPattern;
+global using Application.Contracts.Repositories.Base.Crud;
+global using Infrastructure.ImplementationContract.Repositories.NpgsqlMappers;
+global using Infrastructure.ImplementationContract.Repositories.NpgsqlCommands;
+global using Infrastructure.ImplementationContract.Repositories.NpgsqlParameters;
