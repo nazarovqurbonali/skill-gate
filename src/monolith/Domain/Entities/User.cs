@@ -23,6 +23,4 @@ public sealed class User : BaseEntity
 
     public string? TwoFactorSecret { get; set; }
     public bool TwoFactorEnabled { get; set; }
-
-    public Guid TokenVersion { get; set; } = Guid.NewGuid();
 }
