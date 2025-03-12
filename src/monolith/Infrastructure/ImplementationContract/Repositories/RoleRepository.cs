@@ -67,10 +67,7 @@ public sealed class RoleRepository(
 
     public async Task<Result<IEnumerable<Role>>> GetAllAsync(CancellationToken token = default)
         => await ExecuteQueryListAsync(RoleNpgsqlCommands.GetAllRoles, _ => { }, token);
-
-    public async Task<Result<IEnumerable<Role>>> GetAllAsync(string query, CancellationToken token = default)
-        => await ExecuteQueryListAsync(query, _ => { }, token);
-
+    
     private async Task<Result<int>> ExecuteNonQueryTransactionAsync(string query,
         Action<NpgsqlCommand> configureCommand, CancellationToken token)
     {

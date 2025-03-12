@@ -68,10 +68,6 @@ public sealed class UserRoleRepository(
         return await ExecuteQueryListAsync(UserRoleNpgsqlCommands.GetAllUserRoles, _ => { }, token);
     }
 
-    public async Task<Result<IEnumerable<UserRole>>> GetAllAsync(string query, CancellationToken token = default)
-    {
-        return await ExecuteQueryListAsync(query, _ => { }, token);
-    }
 
     public async Task<Result<int>> DeleteAsync(Guid id, CancellationToken token = default)
     {

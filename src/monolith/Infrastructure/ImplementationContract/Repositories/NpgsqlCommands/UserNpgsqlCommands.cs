@@ -65,4 +65,10 @@ public static class UserNpgsqlCommands
     WHERE (u.user_name = @Login OR u.phone_number = @Login OR u.email = @Login)
       AND u.password_hash = @Password";
 
+    public const string CheckToUniqueUser=@"
+        SELECT EXISTS (
+            SELECT 1 FROM users 
+            WHERE (user_name = @UserName OR email = @Email OR phone_number = @PhoneNumber)
+            AND id <> @UserId
+        )";
 }

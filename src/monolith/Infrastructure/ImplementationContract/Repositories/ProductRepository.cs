@@ -69,9 +69,7 @@ public sealed class ProductRepository(
     public async Task<Result<IEnumerable<Product>>> GetAllAsync(CancellationToken token = default) =>
         await ExecuteQueryListAsync(ProductNpgsqlCommands.GetAllProducts, _ => { }, token);
 
-    public async Task<Result<IEnumerable<Product>>> GetAllAsync(string query, CancellationToken token = default) =>
-        await ExecuteQueryListAsync(query, _ => { }, token);
-
+ 
     private async Task<Result<int>> ExecuteNonQueryTransactionAsync(string query,
         Action<NpgsqlCommand> configureCommand, CancellationToken token)
     {

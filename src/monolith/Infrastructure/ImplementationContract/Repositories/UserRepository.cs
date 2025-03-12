@@ -65,8 +65,43 @@ public sealed class UserRepository(
     public async Task<Result<IEnumerable<User>>> GetAllAsync(CancellationToken token = default)
         => await ExecuteQueryListAsync(UserNpgsqlCommands.GetAllUsers, _ => { }, token);
 
-    public async Task<Result<IEnumerable<User>>> GetAllAsync(string query, CancellationToken token = default)
-        => await ExecuteQueryListAsync(query, _ => { }, token);
+    public async Task<Result<IEnumerable<User>>> GetAllAsync(UserFilter filter, CancellationToken token = default)
+    {
+        string query = UserNpgsqlCommands.GetAllUsers;
+        List<string> conditions = new List<string>();
+        List<NpgsqlParameter> parameters = new List<NpgsqlParameter>();
+
+        void AddCondition(string column, string paramName, string? value, bool useLike = true)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return;
+
+            if (useLike)
+            {
+                conditions.Add($"{column} ILIKE @{paramName}");
+                parameters.Add(new NpgsqlParameter(paramName, $"%{value}%"));
+            }
+            else
+            {
+                conditions.Add($"{column} = @{paramName}");
+                parameters.Add(new NpgsqlParameter(paramName, value));
+            }
+        }
+
+        AddCondition("first_name", "FirstName", filter.FirstName);
+        AddCondition("last_name", "LastName", filter.LastName);
+        AddCondition("email", "Email", filter.Email, useLike: false);
+        AddCondition("phone_number", "PhoneNumber", filter.PhoneNumber, useLike: false);
+        AddCondition("user_name", "UserName", filter.UserName, useLike: false);
+
+        if (conditions.Any())
+        {
+            query += " WHERE " + string.Join(" AND ", conditions);
+        }
+
+        return await ExecuteQueryListAsync(query,
+            (cmd) => { cmd.Parameters.AddRange(parameters.ToArray()); }, token);
+    }
+
 
     public async Task<Result<bool>> CheckExistingUserAsync(RegisterRequest request, CancellationToken token = default)
     {
@@ -115,7 +150,6 @@ public sealed class UserRepository(
     private async Task<Result<int>> ExecuteNonQueryTransactionAsync(string query,
         Action<NpgsqlCommand> configureCommand, CancellationToken token)
     {
-        token.ThrowIfCancellationRequested();
         await using NpgsqlConnection connection = await DbExtensions.CreateConnectionAsync(_connectionString);
         await using NpgsqlTransaction transaction = await connection.BeginTransactionAsync(token);
 
@@ -145,7 +179,6 @@ public sealed class UserRepository(
     private async Task<Result<IEnumerable<User>>> ExecuteQueryListAsync(string query,
         Action<NpgsqlCommand> configureCommand, CancellationToken token)
     {
-        token.ThrowIfCancellationRequested();
         await using NpgsqlConnection connection = await DbExtensions.CreateConnectionAsync(_connectionString);
         await using NpgsqlCommand command = new(query, connection);
         configureCommand(command);
@@ -171,10 +204,13 @@ public sealed class UserRepository(
     private async Task<Result<User?>> ExecuteQuerySingleAsync(string query, Action<NpgsqlCommand> configureCommand,
         CancellationToken token = default)
     {
-        token.ThrowIfCancellationRequested();
         Result<IEnumerable<User>> result = await ExecuteQueryListAsync(query, configureCommand, token);
+        
         if (result.IsSuccess)
             return Result<User?>.Success(result.Value?.FirstOrDefault());
+        if (result.Value != null && !result.Value.Any())
+            return Result<User?>.Failure(ResultPatternError.NotFound());
+        
         return Result<User?>.Failure(result.Error);
     }
 
@@ -237,4 +273,30 @@ public sealed class UserRepository(
             return Result<ClaimsPrincipal>.Failure(ResultPatternError.InternalServerError(e.Message));
         }
     }
+
+    public async Task<Result<bool>> CheckToUniqueUserAsync(User request, CancellationToken token = default)
+    {
+
+        await using NpgsqlConnection connection = await DbExtensions.CreateConnectionAsync(_connectionString);
+        await using NpgsqlCommand command = new(UserNpgsqlCommands.CheckToUniqueUser, connection);
+
+        try
+        {
+            command.Parameters.AddWithValue("@UserName", request.UserName);
+            command.Parameters.AddWithValue("@Email", request.Email);
+            command.Parameters.AddWithValue("@PhoneNumber", request.PhoneNumber);
+            command.Parameters.AddWithValue("@UserId", request.Id);
+
+            bool exists = Convert.ToBoolean(await command.ExecuteScalarAsync(token));
+            return exists
+                ? Result<bool>.Failure(ResultPatternError.Conflict("User with the same credentials already exists."))
+                : Result<bool>.Success(true);
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e, "Failed to execute uniqueness check.");
+            return Result<bool>.Failure(ResultPatternError.InternalServerError(e.Message));
+        }
+    }
+
 }
