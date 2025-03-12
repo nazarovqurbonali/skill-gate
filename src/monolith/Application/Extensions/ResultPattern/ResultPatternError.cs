@@ -5,7 +5,7 @@ public sealed record ResultPatternError
     public int Code { get; }
     public string Message { get; }
     public ErrorType ErrorType { get; }
-    public List<string> Details { get; } = new();
+    public List<string> Details { get; } = [];
 
     private ResultPatternError(int code, string message, ErrorType errorType, List<string>? details = null)
     {

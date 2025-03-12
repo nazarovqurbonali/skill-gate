@@ -7,6 +7,8 @@ public readonly record struct RegisterRequest()
 
     [Required, MinLength(4), MaxLength(128)]
     public string UserName { get; init; } = string.Empty;
+    [Required,Phone]
+    public string Phone { get; init; } = string.Empty;
 
     [Required, MinLength(8), MaxLength(128)]
     public string Password { get; init; } = string.Empty;

@@ -1,4 +1,4 @@
-namespace Application.Extensions.Http;
+namespace Domain.Constants;
 
 public static class CustomClaimTypes
 {

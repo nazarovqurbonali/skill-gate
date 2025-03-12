@@ -10,6 +10,5 @@ public interface IIdentityService
         LoginRequest request,
         CancellationToken token = default);
 
-    Task<BaseResult> LogoutAsync(
-        CancellationToken token = default);
+    Task<BaseResult> LogoutAsync();
 }

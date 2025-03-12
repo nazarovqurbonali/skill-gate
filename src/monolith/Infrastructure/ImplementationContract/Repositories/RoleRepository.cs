@@ -133,4 +133,28 @@ public sealed class RoleRepository(
             return Result<Role?>.Success(result.Value?.FirstOrDefault());
         return Result<Role?>.Failure(result.Error);
     }
+
+    public async Task<Result<Role?>> GetRoleByNameAsync(string roleName, CancellationToken token = default)
+        => await ExecuteQuerySingleAsync(RoleNpgsqlCommands.GetRoleByName,
+            cmd => cmd.Parameters.AddWithValue("@RoleName", roleName),
+            token);
+
+    public async Task<Result<bool>> CheckExistingRoleAsync(string roleName, CancellationToken token = default)
+    {
+        await using NpgsqlConnection connection = await DbExtensions.CreateConnectionAsync(_connectionString);
+        await using NpgsqlCommand command = new(RoleNpgsqlCommands.CheckExistingRole, connection);
+        try
+        {
+            command.Parameters.AddWithValue("@RoleName", roleName);
+            bool result = Convert.ToBoolean(await command.ExecuteScalarAsync(token));
+            return result
+                ? Result<bool>.Success(true)
+                : Result<bool>.Failure(ResultPatternError.InternalServerError());
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e, "Failed to execute query.");
+            return Result<bool>.Failure(ResultPatternError.InternalServerError(e.Message));
+        }
+    }
 }

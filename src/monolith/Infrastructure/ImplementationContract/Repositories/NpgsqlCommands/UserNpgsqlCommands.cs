@@ -38,4 +38,31 @@ public static class UserNpgsqlCommands
 
     public const string GetAllUsers = @"
         SELECT * FROM users";
+
+    public const string CheckExistingUser = @"SELECT EXISTS (
+            SELECT 1
+            FROM users
+            WHERE username = @Username
+               OR phone = @Phone
+               OR email = @Email
+        )";
+
+    public const string CheckToLoin = @"SELECT EXISTS (
+    SELECT 1
+    FROM users
+    WHERE (username = @Login
+           OR phone = @Login
+           OR email = @Login) 
+          AND password = @Password)";
+    
+    public const string GetUserWithRolesByCredentials = @"
+    SELECT 
+        u.id, u.first_name, u.last_name, u.email, u.phone_number, u.user_name, 
+        r.name AS role_name
+    FROM users u
+    LEFT JOIN user_roles ur ON u.id = ur.user_id
+    LEFT JOIN roles r ON ur.role_id = r.id
+    WHERE (u.user_name = @Login OR u.phone_number = @Login OR u.email = @Login)
+      AND u.password_hash = @Password";
+
 }
