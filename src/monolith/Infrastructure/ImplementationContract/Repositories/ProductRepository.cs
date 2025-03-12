@@ -69,7 +69,42 @@ public sealed class ProductRepository(
     public async Task<Result<IEnumerable<Product>>> GetAllAsync(CancellationToken token = default) =>
         await ExecuteQueryListAsync(ProductNpgsqlCommands.GetAllProducts, _ => { }, token);
 
- 
+    public async Task<Result<IEnumerable<Product>>> GetAllAsync(ProductFilter filter, CancellationToken token = default)
+    {
+        string query = ProductNpgsqlCommands.GetAllProducts;
+        List<string> conditions = [];
+        List<NpgsqlParameter> parameters = [];
+        
+
+        void AddCondition(string column, string paramName, string? value, bool useLike = true)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return;
+
+            if (useLike)
+            {
+                conditions.Add($"{column} ILIKE @{paramName}");
+                parameters.Add(new NpgsqlParameter(paramName, $"%{value}%"));
+            }
+            else
+            {
+                conditions.Add($"{column} = @{paramName}");
+                parameters.Add(new NpgsqlParameter(paramName, value));
+            }
+        }
+
+        AddCondition("name", "Name", filter.Name);
+        AddCondition("price", "Price", filter.Price.ToString());
+        AddCondition("description", "Description", filter.Description);
+        AddCondition("stock_quantity", "StockQuantity", filter.StockQuantity.ToString());
+
+        if (conditions.Any())
+            query += " WHERE " + string.Join(" AND ", conditions);
+
+        return await ExecuteQueryListAsync(query,
+            (cmd) => { cmd.Parameters.AddRange(parameters.ToArray()); }, token);
+    }
+
+
     private async Task<Result<int>> ExecuteNonQueryTransactionAsync(string query,
         Action<NpgsqlCommand> configureCommand, CancellationToken token)
     {

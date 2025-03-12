@@ -131,6 +131,41 @@ public sealed class RoleRepository(
         return Result<Role?>.Failure(result.Error);
     }
 
+    public async Task<Result<IEnumerable<Role>>> GetAllAsync(RoleFilter filter, CancellationToken token = default)
+    {
+        string query = RoleNpgsqlCommands.GetAllRoles;
+        List<string> conditions = [];
+        List<NpgsqlParameter> parameters = [];
+
+        void AddCondition(string column, string paramName, string? value, bool useLike = true)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return;
+
+            if (useLike)
+            {
+                conditions.Add($"{column} ILIKE @{paramName}");
+                parameters.Add(new (paramName, $"%{value}%"));
+            }
+            else
+            {
+                conditions.Add($"{column} = @{paramName}");
+                parameters.Add(new(paramName, value));
+            }
+        }
+
+        AddCondition("role_name", "RoleName", filter.Name);
+        AddCondition("description", "Description", filter.Description);
+        AddCondition("role_key", "RoleKey", filter.Keyword);
+
+        if (conditions.Any())
+        {
+            query += " WHERE " + string.Join(" AND ", conditions);
+        }
+
+        return await ExecuteQueryListAsync(query,
+            (cmd) => { cmd.Parameters.AddRange(parameters.ToArray()); }, token);
+    }
+
     public async Task<Result<Role?>> GetRoleByNameAsync(string roleName, CancellationToken token = default)
         => await ExecuteQuerySingleAsync(RoleNpgsqlCommands.GetRoleByName,
             cmd => cmd.Parameters.AddWithValue("@RoleName", roleName),

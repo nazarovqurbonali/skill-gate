@@ -1,4 +1,4 @@
-namespace API.Infrastructure.Middlewares;
+namespace WebUI.Infrastructure.Middlewares;
 
 public static class RegisterMiddlewares
 {
@@ -7,26 +7,18 @@ public static class RegisterMiddlewares
         {
             using IServiceScope scope = app.Services.CreateScope();
             Seeder seeder = scope.ServiceProvider.GetRequiredService<Seeder>();
-            await seeder.InitialAsync();
+            await seeder.SeedAsync();
         }
 
         app.UseHttpLogging();
         app.UseHttpsRedirection();
         app.UseExceptionHandler("/error");
-        app.UseResponseCompression();
-        //app.UseRateLimiter();
-
-        app.UseCors("AllowAll");
-
         app.UseRouting();
         app.UseAuthentication();
-        app.UseMiddleware<TokenValidationMiddleware>();
         app.UseAuthorization();
-
-        app.UseSwagger();
-        app.UseSwaggerUI();
-
-        app.MapControllers();
+        app.MapControllerRoute(
+            name: "default",
+            pattern: "{controller=Home}/{action=Index}/{id?}");
         await app.RunAsync();
 
         return app;

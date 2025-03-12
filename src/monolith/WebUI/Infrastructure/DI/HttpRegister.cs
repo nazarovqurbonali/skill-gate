@@ -1,4 +1,4 @@
-namespace API.Infrastructure.DI;
+namespace WebUI.Infrastructure.DI;
 
 public static class HttpRegister
 {

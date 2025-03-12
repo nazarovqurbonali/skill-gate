@@ -1,5 +1,4 @@
-namespace API.Infrastructure.DI;
-
+namespace WebUI.Infrastructure.DI;
 public static class EmailRegister
 {
     public static WebApplicationBuilder AddEmailService(this WebApplicationBuilder builder)

@@ -46,10 +46,8 @@ public sealed class UserRoleRepository(
     }
 
     public async Task<Result<int>> UpdateAsync(UserRole value, CancellationToken token = default)
-    {
-        return await ExecuteNonQueryTransactionAsync(UserRoleNpgsqlCommands.UpdateUserRole,
+        => await ExecuteNonQueryTransactionAsync(UserRoleNpgsqlCommands.UpdateUserRole,
             cmd => cmd.AddUpdateUserRoleParameters(value), token);
-    }
 
     public async Task<Result<int>> UpdateAsync(Guid id, UserRole value, CancellationToken token = default)
     {
@@ -58,27 +56,53 @@ public sealed class UserRoleRepository(
     }
 
     public async Task<Result<UserRole?>> GetByIdAsync(Guid id, CancellationToken token = default)
-    {
-        return await ExecuteQuerySingleAsync(UserRoleNpgsqlCommands.GetUserRoleById,
+        => await ExecuteQuerySingleAsync(UserRoleNpgsqlCommands.GetUserRoleById,
             cmd => cmd.Parameters.AddWithValue("@Id", id), token);
-    }
 
     public async Task<Result<IEnumerable<UserRole>>> GetAllAsync(CancellationToken token = default)
-    {
-        return await ExecuteQueryListAsync(UserRoleNpgsqlCommands.GetAllUserRoles, _ => { }, token);
-    }
+        => await ExecuteQueryListAsync(UserRoleNpgsqlCommands.GetAllUserRoles, _ => { }, token);
 
+    public async Task<Result<IEnumerable<UserRole>>> GetAllAsync(UserRoleFilter filter,
+        CancellationToken token = default)
+    {
+        string query = UserRoleNpgsqlCommands.GetAllUserRoles;
+        List<string> conditions = [];
+        List<NpgsqlParameter> parameters = [];
+
+        void AddCondition(string column, string paramName, string? value, bool useLike = true)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return;
+
+            if (useLike)
+            {
+                conditions.Add($"{column} ILIKE @{paramName}");
+                parameters.Add(new NpgsqlParameter(paramName, $"%{value}%"));
+            }
+            else
+            {
+                conditions.Add($"{column} = @{paramName}");
+                parameters.Add(new NpgsqlParameter(paramName, value));
+            }
+        }
+
+        AddCondition("role_id", "RoleId", filter.RoleId.ToString(), false);
+        AddCondition("user_id", "UserId", filter.UserId.ToString(), false);
+
+        if (conditions.Any())
+            query += " WHERE " + string.Join(" AND ", conditions);
+
+        return await ExecuteQueryListAsync(query,
+            (cmd) => { cmd.Parameters.AddRange(parameters.ToArray()); }, token);
+    }
 
     public async Task<Result<int>> DeleteAsync(Guid id, CancellationToken token = default)
-    {
-        return await ExecuteNonQueryTransactionAsync(UserRoleNpgsqlCommands.DeleteUserRoleById,
+        => await ExecuteNonQueryTransactionAsync(UserRoleNpgsqlCommands.DeleteUserRoleById,
             cmd => cmd.Parameters.AddWithValue("@Id", id), token);
-    }
+
 
     public async Task<Result<int>> DeleteAsync(UserRole value, CancellationToken token = default)
-    {
-        return await DeleteAsync(value.Id, token);
-    }
+        => await DeleteAsync(value.Id, token);
+
 
     private async Task<Result<int>> ExecuteNonQueryTransactionAsync(string query,
         Action<NpgsqlCommand> configureCommand, CancellationToken token)

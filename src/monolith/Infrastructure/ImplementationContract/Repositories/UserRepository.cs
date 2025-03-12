@@ -94,9 +94,7 @@ public sealed class UserRepository(
         AddCondition("user_name", "UserName", filter.UserName, useLike: false);
 
         if (conditions.Any())
-        {
             query += " WHERE " + string.Join(" AND ", conditions);
-        }
 
         return await ExecuteQueryListAsync(query,
             (cmd) => { cmd.Parameters.AddRange(parameters.ToArray()); }, token);
