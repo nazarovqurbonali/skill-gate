@@ -4,15 +4,16 @@ public static class RegisterMiddlewares
 {
     public static async Task<WebApplication> MapMiddlewares(this WebApplication app)
     {
-        {
-            using IServiceScope scope = app.Services.CreateScope();
-            Seeder seeder = scope.ServiceProvider.GetRequiredService<Seeder>();
-            await seeder.SeedAsync();
-        }
+        // {
+        //     using IServiceScope scope = app.Services.CreateScope();
+        //     Seeder seeder = scope.ServiceProvider.GetRequiredService<Seeder>();
+        //     await seeder.SeedAsync();
+        // }
 
         app.UseHttpLogging();
         app.UseHttpsRedirection();
         app.UseExceptionHandler("/error");
+        app.UseStaticFiles();
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();

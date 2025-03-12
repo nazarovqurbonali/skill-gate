@@ -14,7 +14,7 @@ public static class RegisterCustomService
         services.AddScoped<Seeder>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
-        services.AddScoped<ProductRepository, ProductRepository>();
+        services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<IUserRoleRepository, UserRoleRepository>();
 
         services.AddScoped<IUserService, UserService>();
