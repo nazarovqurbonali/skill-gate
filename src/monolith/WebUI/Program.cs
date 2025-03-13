@@ -5,3 +5,5 @@ builder.AddServices();
 WebApplication app = builder.Build();
 
 await app.MapMiddlewares();
+
+app.Run();

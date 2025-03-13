@@ -42,7 +42,7 @@ public static class UserNpgsqlCommands
     public const string CheckExistingUser = @"SELECT EXISTS (
             SELECT 1
             FROM users
-            WHERE username = @Username
+            WHERE user_name = @Username
                OR phone = @Phone
                OR email = @Email
         )";
@@ -50,10 +50,10 @@ public static class UserNpgsqlCommands
     public const string CheckToLoin = @"SELECT EXISTS (
     SELECT 1
     FROM users
-    WHERE (username = @Login
-           OR phone = @Login
+    WHERE (user_name = @Login
+           OR phone_number = @Login
            OR email = @Login) 
-          AND password = @Password)";
+          AND password_hash = @Password)";
     
     public const string GetUserWithRolesByCredentials = @"
     SELECT 

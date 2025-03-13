@@ -1,0 +1,63 @@
+@model Application.Extensions.DTOs.Identity.Requests.LoginRequest
+
+@{
+ViewData["Title"] = "Login";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2 class="text-center text-primary mb-4">Login</h2>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+            <div class="alert alert-danger">
+                <strong>Error!</strong> Please correct the errors below and try again.
+                <ul>
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                    <li>@error.ErrorMessage</li>
+                    }
+                </ul>
+            </div>
+            }
+
+            <form asp-controller="Identity" asp-action="Login" method="post" novalidate>
+                @Html.AntiForgeryToken()
+
+                <div class="form-group mb-3">
+                    <label asp-for="Login" class="form-label">Username or Email</label>
+                    <input asp-for="Login" class="form-control @(ViewData.ModelState["Login"]?.Errors.Count > 0 ? "is-invalid" : "")" required>
+                    <span asp-validation-for="Login" class="invalid-feedback"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Password" class="form-label">Password</label>
+                    <input asp-for="Password" type="password" class="form-control @(ViewData.ModelState["Password"]?.Errors.Count > 0 ? "is-invalid" : "")" required>
+                    <span asp-validation-for="Password" class="invalid-feedback"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    (function () {
+        'use strict';
+        var forms = document.querySelectorAll('form');
+
+        Array.prototype.slice.call(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+</script>
+}

@@ -8,9 +8,9 @@ public static class AuthRegister
             .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options =>
             {
-                options.LogoutPath = "/auth/logout";
-                options.LoginPath = "/auth/login";
-                options.AccessDeniedPath = "/access-denied";
+                options.LogoutPath = "/identity/logout";
+                options.LoginPath = "/identity/login";
+                options.AccessDeniedPath = "/error/403";
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
                 options.ClaimsIssuer = "skill-gate issuer";
                 options.Cookie.Name = "skill-gate";

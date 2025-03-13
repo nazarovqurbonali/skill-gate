@@ -51,12 +51,21 @@ public class Seeder(IConfiguration config, ILogger<Seeder> logger)
                 }
 
                 bool inserted = await InsertEntityAsync(connection, SqlCommands.InsertRole, cancellationToken,
-                    new NpgsqlParameter("@id", role.Id),
-                    new NpgsqlParameter("@name", role.Name),
-                    new NpgsqlParameter("@role_key", role.RoleKey),
-                    new NpgsqlParameter("@description", role.Description?.ToDbValue()),
-                    new NpgsqlParameter("@created_by_ip", role.CreatedByIp?.ToDbValue()),
-                    new NpgsqlParameter("@created_by", role.CreatedBy?.ToDbValue())
+                    new("@id", role.Id),
+                    new("@name", role.Name),
+                    new("@role_key", role.RoleKey),
+                    new("@description", NpgsqlDbType.Text)
+                    {
+                        Value = role.Description.ToDbValue()
+                    },
+                    new("@created_by_ip", NpgsqlDbType.Text)
+                    {
+                        Value = role.CreatedByIp.ToDbValue()
+                    },
+                    new("@created_by", NpgsqlDbType.Uuid)
+                    {
+                        Value = role.CreatedBy.ToDbValue()
+                    }
                 );
 
                 if (inserted)

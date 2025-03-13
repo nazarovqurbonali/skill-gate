@@ -1,4 +1,5 @@
 global using Npgsql;
+global using NpgsqlTypes;
 global using Domain.Enums;
 global using Domain.Entities;
 global using Domain.Constants;

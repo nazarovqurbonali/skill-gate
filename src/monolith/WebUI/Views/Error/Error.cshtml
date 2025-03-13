@@ -1,17 +1,18 @@
-﻿@model ErrorViewModel
+﻿@model WebUI.Models.ErrorViewModel
 @{
-    ViewData["Title"] = "Error";
+ViewData["Title"] = "Error";
 }
 
 <div class="container mt-5">
     <div class="alert alert-danger text-center">
         <h1 class="display-4">Oops!</h1>
         <p class="lead">We’re sorry, an error occurred while processing your request.</p>
+
         @if (Model.ShowRequestId)
         {
-            <p>
-                <strong>Request ID:</strong> <code>@Model.RequestId</code>
-            </p>
+        <p>
+            <strong>Request ID:</strong> <code>@Model.RequestId</code>
+        </p>
         }
     </div>
 

@@ -3,10 +3,10 @@ public static class EmailRegister
 {
     public static WebApplicationBuilder AddEmailService(this WebApplicationBuilder builder)
     {
-        var emailConfig = builder.Configuration
+        EmailConfig emailConfig = builder.Configuration
             .GetSection("EmailConfiguration")
-            .Get<EmailConfig>();
-        builder.Services.AddSingleton(emailConfig!);
+            .Get<EmailConfig>()!;
+        builder.Services.AddSingleton(emailConfig);
         builder.Services.AddTransient<SmtpClient>();
         builder.Services.AddScoped<IEmailService, EmailService>();
         builder.Services.AddScoped<ISmtpClientWrapper, SmtpClientWrapper>();
