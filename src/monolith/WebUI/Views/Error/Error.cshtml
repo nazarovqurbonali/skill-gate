@@ -1,0 +1,42 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<div class="container mt-5">
+    <div class="alert alert-danger text-center">
+        <h1 class="display-4">Oops!</h1>
+        <p class="lead">We’re sorry, an error occurred while processing your request.</p>
+        @if (Model.ShowRequestId)
+        {
+            <p>
+                <strong>Request ID:</strong> <code>@Model.RequestId</code>
+            </p>
+        }
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <h3 class="card-title">What Went Wrong?</h3>
+            <p>
+                An unexpected error occurred. Please try again later or contact support if the problem persists.
+            </p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Development Mode</h4>
+            <p class="card-text">
+                When running in the <strong>Development</strong> environment, detailed error information is available for debugging purposes.
+                <br />
+                <strong>Important:</strong> The Development environment should not be enabled in production, as it may expose sensitive information.
+                To enable detailed errors locally, set the <strong>ASPNETCORE_ENVIRONMENT</strong> variable to <strong>Development</strong> and restart the app.
+            </p>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="@Url.Action("Index", "Home")" class="btn btn-primary">Return to Home</a>
+    </div>
+</div>

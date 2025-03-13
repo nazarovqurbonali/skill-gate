@@ -9,10 +9,11 @@ public static class RegisterMiddlewares
         //     Seeder seeder = scope.ServiceProvider.GetRequiredService<Seeder>();
         //     await seeder.SeedAsync();
         // }
-
+        
+        app.UseExceptionHandler("/error/500"); 
+        app.UseStatusCodePagesWithReExecute("/error/{0}");
         app.UseHttpLogging();
         app.UseHttpsRedirection();
-        app.UseExceptionHandler("/error");
         app.UseStaticFiles();
         app.UseRouting();
         app.UseAuthentication();
