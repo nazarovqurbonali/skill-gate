@@ -1,77 +1,130 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - WebUI</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/WebUI.styles.css" asp-append-version="true" />
+  <meta charset="utf-8" />
+  <title>@ViewBag.Title - Skill-Gate</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Подключение FontAwesome для иконок -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        integrity="sha512-Fo3rlrZj/kTcXQnN4C3++...=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- Подключение внешнего CSS-файла -->
+  <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-<body class="bg-light">
-<header>
-    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
-        <div class="container-fluid">
-            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">WebUI</a>
-            <button class="btn btn-outline-secondary" id="themeToggle">🌙</button>
-            <div class="dropdown">
-                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="profileMenu" data-bs-toggle="dropdown" aria-expanded="false">
-                    👤 Профиль
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="profileMenu">
-                    <li><span class="dropdown-item-text" id="userName">Гость</span></li>
-                    <li><a class="dropdown-item" href="#" id="authAction">Login</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-</header>
-<div class="container-fluid">
-    <div class="row">
-        <nav class="col-md-3 col-lg-2 d-md-block bg-dark sidebar">
-            <div class="position-sticky">
-                <ul class="nav flex-column">
-                    <li class="nav-item"><a class="nav-link text-white" asp-controller="Users" asp-action="Index">Users</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" asp-controller="Products" asp-action="Index">Products</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" asp-controller="UserRoles" asp-action="Index">UserRoles</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" asp-controller="Roles" asp-action="Index">Roles</a></li>
-                </ul>
-            </div>
-        </nav>
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-3">
-            @RenderBody()
-        </main>
+<body>
+<div class="layout">
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <a href="@Url.Action("Index", "Home")" class="logo">Skill-Gate</a>
     </div>
-</div>
-<footer class="border-top footer text-muted text-center p-2">
-    <div class="container">&copy; 2025 - WebUI - Информация о разработчике</div>
-</footer>
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const themeToggle = document.getElementById("themeToggle");
-        const currentTheme = localStorage.getItem("theme") || "light";
-
-        if (currentTheme === "dark") {
-            document.body.classList.add("dark-mode");
-            themeToggle.textContent = "☀️";
+    <div class="header-right">
+      <!-- Переключатель темы -->
+      <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <i class="fas fa-moon" aria-hidden="true"></i>
+      </button>
+      <div class="auth-links">
+        @if (User.Identity!.IsAuthenticated)
+        {
+        <a href="@Url.Action("Profile", "Account")">Profile</a>
+        <a href="@Url.Action("Logout", "Account")">Logout</a>
         }
+        else
+        {
+        <a href="@Url.Action("Login", "Account")">Login</a>
+        }
+      </div>
+    </div>
+  </header>
 
-        themeToggle.addEventListener("click", function () {
-            document.body.classList.toggle("dark-mode");
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <ul>
+      <li>
+        <a href="@Url.Action("Index", "Users")">
+          <i class="fas fa-user" aria-hidden="true"></i>
+          <span>Users</span>
+        </a>
+      </li>
+      <li>
+        <a href="@Url.Action("Index", "Roles")">
+          <i class="fas fa-user-shield" aria-hidden="true"></i>
+          <span>Roles</span>
+        </a>
+      </li>
+      <li>
+        <a href="@Url.Action("Index", "UserRoles")">
+          <i class="fas fa-user-tag" aria-hidden="true"></i>
+          <span>UserRoles</span>
+        </a>
+      </li>
+      <li>
+        <a href="@Url.Action("Index", "Products")">
+          <i class="fas fa-box" aria-hidden="true"></i>
+          <span>Products</span>
+        </a>
+      </li>
+    </ul>
+  </aside>
 
-            if (document.body.classList.contains("dark-mode")) {
-                localStorage.setItem("theme", "dark");
-                themeToggle.textContent = "☀️";
-            } else {
-                localStorage.setItem("theme", "light");
-                themeToggle.textContent = "🌙";
-            }
-        });
-    });
+  <!-- MAINBAR -->
+  <main class="mainbar light-theme" id="mainbar">
+    @RenderBody()
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-links">
+      <a href="https://t.me/QurbonaliNazarov" target="_blank">
+        <i class="fab fa-telegram" aria-hidden="true"></i>
+        <span>Telegram</span>
+      </a>
+      <a href="https://github.com/nazarovqurbonali" target="_blank">
+        <i class="fab fa-github" aria-hidden="true"></i>
+        <span>GitHub</span>
+      </a>
+      <a href="https://linkedin.com/in/qurbonali-nazarov-8837b2310" target="_blank">
+        <i class="fab fa-linkedin" aria-hidden="true"></i>
+        <span>LinkedIn</span>
+      </a>
+    </div>
+  </footer>
+</div>
+
+<script>
+  // При загрузке страницы устанавливаем тему из localStorage
+  document.addEventListener('DOMContentLoaded', function() {
+    var mainbar = document.getElementById('mainbar');
+    var themeToggle = document.getElementById('themeToggle');
+    var storedTheme = localStorage.getItem('theme');
+    if (storedTheme === 'dark') {
+      mainbar.classList.remove('light-theme');
+      mainbar.classList.add('dark-theme');
+      themeToggle.innerHTML = '<i class="fas fa-sun" aria-hidden="true"></i>';
+    } else {
+      mainbar.classList.remove('dark-theme');
+      mainbar.classList.add('light-theme');
+      themeToggle.innerHTML = '<i class="fas fa-moon" aria-hidden="true"></i>';
+    }
+  });
+
+  function toggleTheme() {
+    var mainbar = document.getElementById('mainbar');
+    var themeToggle = document.getElementById('themeToggle');
+    if (mainbar.classList.contains('dark-theme')) {
+      // Переключение на светлую тему
+      mainbar.classList.remove('dark-theme');
+      mainbar.classList.add('light-theme');
+      themeToggle.innerHTML = '<i class="fas fa-moon" aria-hidden="true"></i>';
+      localStorage.setItem('theme', 'light');
+    } else {
+      // Переключение на тёмную тему
+      mainbar.classList.remove('light-theme');
+      mainbar.classList.add('dark-theme');
+      themeToggle.innerHTML = '<i class="fas fa-sun" aria-hidden="true"></i>';
+      localStorage.setItem('theme', 'dark');
+    }
+  }
 </script>
-
-@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
