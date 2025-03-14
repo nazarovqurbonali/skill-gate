@@ -1,0 +1,219 @@
+@using Domain.Constants
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model PagedResponse<IEnumerable<Product>>
+@{
+ViewData["Title"] = "Product Management";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 text-gray-800">
+            <i class="fas fa-box me-2"></i>@ViewData["Title"]
+        </h1>
+        @if (User.IsInRole(Roles.Admin))
+        {
+        <a asp-action="Create" class="btn btn-primary shadow-sm">
+            <i class="fas fa-plus-circle me-2"></i>Create New Product
+        </a>
+        }
+    </div>
+
+    <!-- Advanced Filter Section -->
+    <div class="card mb-4 shadow">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <input type="text" name="Name" value="@Context.Request.Query["Name"]"
+                           class="form-control form-control-sm" placeholder="Product Name">
+                </div>
+                <div class="col-md-3">
+                    <input type="text" name="Description" value="@Context.Request.Query["Description"]"
+                           class="form-control form-control-sm" placeholder="Description">
+                </div>
+                <div class="col-md-3">
+                    <input type="number" name="Price" value="@Context.Request.Query["Price"]"
+                           class="form-control form-control-sm" placeholder="Price">
+                </div>
+                <div class="col-md-3">
+                    <input type="number" name="StockQuantity" value="@Context.Request.Query["StockQuantity"]"
+                           class="form-control form-control-sm" placeholder="Stock Quantity">
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-sm btn-primary me-2">
+                        <i class="fas fa-filter me-2"></i>Apply Filters
+                    </button>
+                    <a href="@Url.Action("Index")" class="btn btn-sm btn-outline-secondary">
+                        <i class="fas fa-sync-alt me-2"></i>Reset
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Products Grid -->
+    @if (Model.Data != null && Model.Data.Any())
+    {
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+        @foreach (var product in Model.Data)
+        {
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-light py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-box text-primary me-2"></i>@product.Name
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-5 text-muted">Price:</dt>
+                        <dd class="col-sm-7">@product.Price.ToString("C")</dd>
+
+                        <dt class="col-sm-5 text-muted">Stock Quantity:</dt>
+                        <dd class="col-sm-7">@product.StockQuantity</dd>
+
+                        <dt class="col-sm-5 text-muted">Description:</dt>
+                        <dd class="col-sm-7">@(product.Description ?? "N/A")</dd>
+                    </dl>
+                </div>
+                <div class="card-footer bg-transparent border-top-0 py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a asp-action="Details" asp-route-id="@product.Id"
+                           class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-info-circle me-2"></i>Details
+                        </a>
+
+                        @if (User.IsInRole(Roles.Admin))
+                        {
+                        <div class="btn-group">
+                            <a asp-action="Edit" asp-route-id="@product.Id"
+                               class="btn btn-sm btn-outline-warning">
+                                <i class="fas fa-edit me-2"></i>Edit
+                            </a>
+                            <form asp-action="Delete" asp-route-id="@product.Id" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit"
+                                        class="btn btn-sm btn-outline-danger"
+                                        onclick="return confirm('Are you sure you want to delete this product?');">
+                                    <i class="fas fa-trash-alt me-2"></i>Delete
+                                </button>
+                            </form>
+                        </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+    }
+    else
+    {
+    <div class="alert alert-info shadow-sm">
+        <i class="fas fa-info-circle me-2"></i>No products found matching your criteria.
+    </div>
+    }
+
+    <!-- Pagination -->
+    @if (Model.TotalPages > 1)
+    {
+    var queryParams = new Dictionary<string, string>();
+    foreach (var key in Context.Request.Query.Keys.Where(k => k != "PageNumber" && k != "__RequestVerificationToken"))
+    {
+    queryParams[key] = Context?.Request?.Query[key]!;
+    }
+
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <!-- Previous Page -->
+            <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                <a class="page-link shadow-sm"
+                   asp-all-route-data="queryParams"
+                   asp-route-PageNumber="@(Model.PageNumber - 1)">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            </li>
+
+            <!-- Dynamic Page Numbers -->
+            @{
+            int start = Math.Max(1, Model.PageNumber - 1);
+            int end = Math.Min(Model.TotalPages, Model.PageNumber + 1);
+
+            if (start > 1)
+            {
+            <li class="page-item">
+                <a class="page-link shadow-sm"
+                   asp-all-route-data="queryParams"
+                   asp-route-PageNumber="1">1</a>
+            </li>
+            if (start > 2)
+            {
+            <li class="page-item disabled"><span class="page-link">...</span></li>
+            }
+            }
+
+            for (int i = start; i <= end; i++)
+            {
+            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+
+                @{
+                    var i1 = i;
+                }
+                <a class="page-link shadow-sm"
+                   asp-all-route-data="queryParams"
+                   asp-route-PageNumber="@i1">@i1</a>
+            </li>
+            }
+
+            if (end < Model.TotalPages)
+            {
+            if (end < Model.TotalPages - 1)
+            {
+            <li class="page-item disabled"><span class="page-link">...</span></li>
+            }
+            <li class="page-item">
+                <a class="page-link shadow-sm"
+                   asp-all-route-data="queryParams"
+                   asp-route-PageNumber="@Model.TotalPages">@Model.TotalPages</a>
+            </li>
+            }
+            }
+
+            <!-- Next Page -->
+            <li class="page-item @(Model.PageNumber >= Model.TotalPages ? "disabled" : "")">
+                <a class="page-link shadow-sm"
+                   asp-all-route-data="queryParams"
+                   asp-route-PageNumber="@(Model.PageNumber + 1)">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </li>
+        </ul>
+
+        <div class="text-center text-muted small mt-2">
+            Showing @((Model.PageNumber - 1) * Model.PageSize + 1) -
+            @Math.Min(Model.PageNumber * Model.PageSize, Model.TotalRecords) of @Model.TotalRecords items
+        </div>
+    </nav>
+    }
+</div>
+
+<style>
+    .card {
+        transition: transform 0.2s, box-shadow 0.2s;
+        border-radius: 0.5rem;
+    }
+
+    .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+
+    .page-link {
+        min-width: 45px;
+        text-align: center;
+        border-radius: 0.35rem !important;
+    }
+
+    .btn-outline-danger:hover {
+        color: #fff !important;
+    }
+</style>
