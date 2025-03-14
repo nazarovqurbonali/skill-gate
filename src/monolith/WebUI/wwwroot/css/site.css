@@ -157,3 +157,24 @@ footer {
 .footer-links a:hover {
   color: var(--dark-text);
 }
+
+.auth-link {
+  color: #fff;               
+  background: none;        
+  border: none;           
+  padding: 0;               
+  margin-left: 15px;        
+  text-decoration: none;    
+  cursor: pointer;         
+  font-size: 1rem;          
+  font-family: inherit;     
+  outline: none;            
+}
+
+.auth-link:hover {
+  text-decoration: underline;
+}
+
+.auth-link:focus {
+  outline: none;
+}

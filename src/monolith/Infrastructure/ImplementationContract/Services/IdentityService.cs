@@ -16,6 +16,8 @@ public sealed class IdentityService(
         {
             Result<bool> checkExistingUser = await userRepository.CheckExistingUserAsync(request, token);
             if (!checkExistingUser.IsSuccess)
+                return Result<RegisterResponse>.Failure(checkExistingUser.Error);
+            if (checkExistingUser is { IsSuccess: true, Value: true })
                 return Result<RegisterResponse>.Failure(
                     ResultPatternError.AlreadyExist(
                         "User already exists with this username or phone number or email address"));

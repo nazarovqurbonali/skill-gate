@@ -10,8 +10,8 @@ public static class RegisterMiddlewares
             await seeder.SeedAsync();
         }
 
-        // app.UseExceptionHandler("/error/500");
-        // app.UseStatusCodePagesWithReExecute("/error/{0}");
+        app.UseExceptionHandler("/error/500");
+        app.UseStatusCodePagesWithReExecute("/error/{0}");
         app.UseDeveloperExceptionPage();
         app.UseHttpLogging();
         app.UseHttpsRedirection();

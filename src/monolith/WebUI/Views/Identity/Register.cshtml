@@ -1,53 +1,72 @@
 @model Application.Extensions.DTOs.Identity.Requests.RegisterRequest
 
 @{
-    ViewData["Title"] = "Register";
+ViewData["Title"] = "Register";
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <h2 class="text-center text-primary mb-4">Sign Up</h2>
+<main style="margin-top: 1vh; display: flex; flex-direction: column;">
+    <div style="display: flex; justify-content: center; align-items: center; flex-grow: 1; min-height: 10vh; overflow: hidden; background: #ffffff; color: #000000;">
+        <div style="background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 400px; width: 100%;">
+            <h2 style="text-align: center; color: rgb(8, 27, 45); margin-bottom: 1.5rem;">Sign Up</h2>
+
+            @if (!ViewData.ModelState.IsValid && ViewData.ModelState.Values.Any(v => v.Errors.Count > 0))
+            {
+            <div style="background: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 1rem;">
+                <ul style="margin: 0; padding-left: 20px;">
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                    <li>@error.ErrorMessage</li>
+                    }
+                </ul>
+            </div>
+            }
 
             <form asp-controller="Identity" asp-action="Register" method="post">
-                <div class="form-group mb-3">
-                    <label asp-for="UserName" class="form-label">Username</label>
-                    <input asp-for="UserName" class="form-control" placeholder="Enter your username" required>
-                    <span asp-validation-for="UserName" class="text-danger"></span>
+                <div style="margin-bottom: 1rem;">
+                    <label asp-for="UserName" style="display: block; margin-bottom: 0.5rem;">Username</label>
+                    <input asp-for="UserName" style="width: 100%; padding: 10px; margin-bottom: 0.5rem; border: 1px solid #ccc; border-radius: 5px;" placeholder="Enter your username" required />
+                    <span asp-validation-for="UserName" style="color: #dc3545;"></span>
                 </div>
 
-                <div class="form-group mb-3">
-                    <label asp-for="EmailAddress" class="form-label">Email</label>
-                    <input asp-for="EmailAddress" type="email" class="form-control" placeholder="Enter your email" required>
-                    <span asp-validation-for="EmailAddress" class="text-danger"></span>
+                <div style="margin-bottom: 1rem;">
+                    <label asp-for="EmailAddress" style="display: block; margin-bottom: 0.5rem;">Email</label>
+                    <input asp-for="EmailAddress" type="email" style="width: 100%; padding: 10px; margin-bottom: 0.5rem; border: 1px solid #ccc; border-radius: 5px;" placeholder="Enter your email" required />
+                    <span asp-validation-for="EmailAddress" style="color: #dc3545;"></span>
                 </div>
 
-                <div class="form-group mb-3">
-                    <label asp-for="Phone" class="form-label">Phone Number</label>
-                    <input asp-for="Phone" type="tel" class="form-control" placeholder="Enter your phone number" required>
-                    <span asp-validation-for="Phone" class="text-danger"></span>
+                <div style="margin-bottom: 1rem;">
+                    <label asp-for="Phone" style="display: block; margin-bottom: 0.5rem;">Phone Number</label>
+                    <input asp-for="Phone" type="tel" style="width: 100%; padding: 10px; margin-bottom: 0.5rem; border: 1px solid #ccc; border-radius: 5px;" placeholder="Enter your phone number" required />
+                    <span asp-validation-for="Phone" style="color: #dc3545;"></span>
                 </div>
 
-                <div class="form-group mb-3">
-                    <label asp-for="Password" class="form-label">Password</label>
-                    <input asp-for="Password" type="password" class="form-control" placeholder="Enter your password" required>
-                    <span asp-validation-for="Password" class="text-danger"></span>
+                <div style="margin-bottom: 1rem;">
+                    <label asp-for="Password" style="display: block; margin-bottom: 0.5rem;">Password</label>
+                    <input asp-for="Password" type="password" style="width: 100%; padding: 10px; margin-bottom: 0.5rem; border: 1px solid #ccc; border-radius: 5px;" placeholder="Enter your password" required />
+                    <span asp-validation-for="Password" style="color: #dc3545;"></span>
                 </div>
 
-                <div class="form-group mb-3">
-                    <label asp-for="ConfirmPassword" class="form-label">Confirm Password</label>
-                    <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Confirm your password" required>
-                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                <div style="margin-bottom: 1rem;">
+                    <label asp-for="ConfirmPassword" style="display: block; margin-bottom: 0.5rem;">Confirm Password</label>
+                    <input asp-for="ConfirmPassword" type="password" style="width: 100%; padding: 10px; margin-bottom: 0.5rem; border: 1px solid #ccc; border-radius: 5px;" placeholder="Confirm your password" required />
+                    <span asp-validation-for="ConfirmPassword" style="color: #dc3545;"></span>
                 </div>
 
-                <button type="submit" class="btn btn-primary w-100">Register</button>
+                <button type="submit" style="background: rgb(8, 27, 45); color: #fff; border: none; padding: 10px; width: 100%; border-radius: 5px; cursor: pointer;">Register</button>
             </form>
 
-            <p class="mt-3 text-center">
-                Already have an account? <a asp-controller="Identity" asp-action="Login">Login here</a>
+            <p style="text-align: center; margin-top: 1rem; font-weight: bold;">
+                Already have an account?
+                <a asp-controller="Identity" asp-action="Login" style="color: #1d1de2; text-decoration: none;"
+                   onmouseover="this.style.textDecoration='underline'"
+                   onmouseout="this.style.textDecoration='none'">
+                    Login here
+                </a>
             </p>
         </div>
     </div>
-</div>
+</main>
 
-
+@section Scripts {
+<partial name="_ValidationScriptsPartial" />
+}

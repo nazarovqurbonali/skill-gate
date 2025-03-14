@@ -23,6 +23,7 @@ public sealed class IdentityController(
             return View(request);
         }
 
+        TempData["SuccessMessage"] = "You have successfully logged in.";
         return RedirectToAction("Index", "Home");
     }
 
@@ -30,21 +31,22 @@ public sealed class IdentityController(
     public IActionResult Register() => View(new RegisterRequest());
 
     [HttpPost("register")]
-    [ValidateAntiForgeryToken]
     public async Task<IActionResult> RegisterAsync(RegisterRequest request, CancellationToken token = default)
     {
         if (!ModelState.IsValid)
             return View(request);
 
-        var result = await service.RegisterAsync(request, token);
+        Result<RegisterResponse> result = await service.RegisterAsync(request, token);
         if (!result.IsSuccess)
         {
             ModelState.AddModelError("", result.Error.Message);
             return View(request);
         }
 
+        TempData["SuccessMessage"] = "Registration successful. Please log in.";
         return RedirectToAction("Login");
     }
+
 
     [Authorize]
     [HttpPost("logout")]

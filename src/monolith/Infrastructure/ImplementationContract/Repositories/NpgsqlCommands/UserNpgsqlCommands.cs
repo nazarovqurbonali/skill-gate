@@ -43,7 +43,7 @@ public static class UserNpgsqlCommands
             SELECT 1
             FROM users
             WHERE user_name = @Username
-               OR phone = @Phone
+               OR phone_number = @Phone
                OR email = @Email
         )";
 

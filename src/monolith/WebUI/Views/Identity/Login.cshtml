@@ -1,63 +1,50 @@
 @model Application.Extensions.DTOs.Identity.Requests.LoginRequest
 
 @{
-ViewData["Title"] = "Login";
+    ViewData["Title"] = "Login";
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <h2 class="text-center text-primary mb-4">Login</h2>
+<main style="margin-top: 1vh; display: flex; flex-direction: column;">
+  <div style="display: flex; justify-content: center; align-items: center; flex-grow: 1; min-height: 10vh; overflow: hidden; background: #ffffff; color: #000000;">
+    <div style="background: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 400px; width: 100%;">
+      <h2 style="text-align: center; color: rgb(8, 27, 45); margin-bottom: 1.5rem;">Login</h2>
 
-            @if (!ViewData.ModelState.IsValid)
-            {
-            <div class="alert alert-danger">
-                <strong>Error!</strong> Please correct the errors below and try again.
-                <ul>
-                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-                    {
-                    <li>@error.ErrorMessage</li>
-                    }
-                </ul>
-            </div>
-            }
+      @if (!ViewData.ModelState.IsValid)
+      {
+          <div style="background: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 1rem;">
+              @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+              {
+                  <p style="margin: 0;">@error.ErrorMessage</p>
+              }
+          </div>
+      }
 
-            <form asp-controller="Identity" asp-action="Login" method="post" novalidate>
-                @Html.AntiForgeryToken()
+      <form asp-controller="Identity" asp-action="Login" method="post">
+          <div style="margin-bottom: 1rem;">
+              <label asp-for="Login" style="display: block; margin-bottom: 0.5rem;">Username or Email</label>
+              <input asp-for="Login" style="width: 100%; padding: 10px; margin-bottom: 0.5rem; border: 1px solid #ccc; border-radius: 5px;" placeholder="Enter your username or email or phone" required />
+              <span asp-validation-for="Login" style="color: #dc3545;"></span>
+          </div>
 
-                <div class="form-group mb-3">
-                    <label asp-for="Login" class="form-label">Username or Email</label>
-                    <input asp-for="Login" class="form-control @(ViewData.ModelState["Login"]?.Errors.Count > 0 ? "is-invalid" : "")" required>
-                    <span asp-validation-for="Login" class="invalid-feedback"></span>
-                </div>
+          <div style="margin-bottom: 1rem;">
+              <label asp-for="Password" style="display: block; margin-bottom: 0.5rem;">Password</label>
+              <input asp-for="Password" type="password" style="width: 100%; padding: 10px; margin-bottom: 0.5rem; border: 1px solid #ccc; border-radius: 5px;" placeholder="Enter your password" required />
+              <span asp-validation-for="Password" style="color: #dc3545;"></span>
+          </div>
 
-                <div class="form-group mb-3">
-                    <label asp-for="Password" class="form-label">Password</label>
-                    <input asp-for="Password" type="password" class="form-control @(ViewData.ModelState["Password"]?.Errors.Count > 0 ? "is-invalid" : "")" required>
-                    <span asp-validation-for="Password" class="invalid-feedback"></span>
-                </div>
+          <button type="submit" style="background: rgb(8, 27, 45); color: #fff; border: none; padding: 10px; width: 100%; border-radius: 5px; cursor: pointer;">Login</button>
+      </form>
 
-                <button type="submit" class="btn btn-primary w-100">Login</button>
-            </form>
-        </div>
+      <p style="text-align: center; margin-top: 1rem; font-weight: bold;">
+          Don't have an account?
+          <a asp-controller="Identity" asp-action="Register" style="color:#1d1de2; text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+              Sign up here
+          </a>
+      </p>
     </div>
-</div>
+  </div>
+</main>
 
 @section Scripts {
-<script>
-    (function () {
-        'use strict';
-        var forms = document.querySelectorAll('form');
-
-        Array.prototype.slice.call(forms).forEach(function (form) {
-            form.addEventListener('submit', function (event) {
-                if (!form.checkValidity()) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-                form.classList.add('was-validated');
-            }, false);
-        });
-    })();
-</script>
+  <partial name="_ValidationScriptsPartial" />
 }

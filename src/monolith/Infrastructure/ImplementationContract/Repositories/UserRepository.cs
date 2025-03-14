@@ -112,9 +112,7 @@ public sealed class UserRepository(
             command.Parameters.AddWithValue("@Email", request.EmailAddress);
 
             bool result = Convert.ToBoolean(await command.ExecuteScalarAsync(token));
-            return result
-                ? Result<bool>.Success(true)
-                : Result<bool>.Failure(ResultPatternError.InternalServerError());
+            return Result<bool>.Success(result);
         }
         catch (Exception e)
         {
@@ -135,7 +133,7 @@ public sealed class UserRepository(
             bool result = Convert.ToBoolean(await command.ExecuteScalarAsync(token));
             return result
                 ? Result<bool>.Success(true)
-                : Result<bool>.Failure(ResultPatternError.InternalServerError());
+                : Result<bool>.Failure(ResultPatternError.NotFound("User with Login and Password not found"));
         }
         catch (Exception e)
         {
@@ -234,12 +232,23 @@ public sealed class UserRepository(
                 user ??= new User
                 {
                     Id = reader.GetGuid(reader.GetOrdinal("id")),
-                    FirstName = reader.GetString(reader.GetOrdinal("first_name")),
-                    LastName = reader.GetString(reader.GetOrdinal("last_name")),
-                    Email = reader.GetString(reader.GetOrdinal("email")),
-                    PhoneNumber = reader.GetString(reader.GetOrdinal("phone_number")),
-                    UserName = reader.GetString(reader.GetOrdinal("user_name"))
+                    FirstName = reader.IsDBNull(reader.GetOrdinal("first_name"))
+                        ? string.Empty 
+                        : reader.GetString(reader.GetOrdinal("first_name")),
+                    LastName = reader.IsDBNull(reader.GetOrdinal("last_name"))
+                        ? string.Empty 
+                        : reader.GetString(reader.GetOrdinal("last_name")),
+                    Email = reader.IsDBNull(reader.GetOrdinal("email"))
+                        ? string.Empty 
+                        : reader.GetString(reader.GetOrdinal("email")),
+                    PhoneNumber = reader.IsDBNull(reader.GetOrdinal("phone_number"))
+                        ? string.Empty 
+                        : reader.GetString(reader.GetOrdinal("phone_number")),
+                    UserName = reader.IsDBNull(reader.GetOrdinal("user_name"))
+                        ? string.Empty 
+                        : reader.GetString(reader.GetOrdinal("user_name"))
                 };
+
 
                 if (!reader.IsDBNull(reader.GetOrdinal("role_name")))
                     roles.Add(reader.GetString(reader.GetOrdinal("role_name")));
