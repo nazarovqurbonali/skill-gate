@@ -1,11 +1,14 @@
 namespace Application.Extensions.Responses.PagedResponse;
 
-public record PagedResponse<T> : BaseFilter
+public sealed class PagedResponse<T> : BaseFilter
 {
     public int TotalPages { get; init; }
     public int TotalRecords { get; init; }
     public T? Data { get; init; }
 
+    public PagedResponse()
+    {
+    }
     private PagedResponse(int pageSize, int pageNumber, int totalRecords, T? data)
         : base(pageNumber, pageSize)
     {

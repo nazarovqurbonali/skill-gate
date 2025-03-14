@@ -1,5 +1,7 @@
 namespace Application.Extensions.Filters;
 
-public sealed record UserRoleFilter(
-    Guid? UserId,
-    Guid? RoleId):BaseFilter;
+public sealed class UserRoleFilter : BaseFilter
+{
+    public Guid? UserId { get; set; }
+    public Guid? RoleId { get; set; }
+}

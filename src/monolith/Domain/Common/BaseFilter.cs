@@ -1,9 +1,9 @@
 namespace Domain.Common;
 
-public abstract record BaseFilter
+public abstract class BaseFilter
 {
-    public int PageSize { get; init; }
-    public int PageNumber { get; init; }
+    public int PageSize { get; set; }
+    public int PageNumber { get; set; }
 
     protected BaseFilter()
     {

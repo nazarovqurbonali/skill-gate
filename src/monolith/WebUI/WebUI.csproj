@@ -4,6 +4,13 @@
     <ProjectReference Include="..\Bootstrapper\Bootstrapper.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\Product\" />
+    <Folder Include="Views\Role\" />
+    <Folder Include="Views\UserRole\" />
+    <Folder Include="Views\User\" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
