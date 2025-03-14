@@ -13,16 +13,16 @@
 <div class="layout">
     @if (TempData["SuccessMessage"] != null)
     {
-    <div class="alert alert-success" id="tempSuccess" style="position: fixed; top: 15px; left: 50%; transform: translateX(-50%); z-index: 9999; margin: 0;">
-        @TempData["SuccessMessage"]
-    </div>
+        <div class="alert alert-success" id="tempSuccess" style="position: fixed; top: 15px; left: 50%; transform: translateX(-50%); z-index: 9999; margin: 0;">
+            @TempData["SuccessMessage"]
+        </div>
     }
 
     @if (TempData["ErrorMessage"] != null)
     {
-    <div class="alert alert-danger" id="tempError" style="position: fixed; top: 15px; left: 50%; transform: translateX(-50%); z-index: 9999; margin: 0;">
-        @TempData["ErrorMessage"]
-    </div>
+        <div class="alert alert-danger" id="tempError" style="position: fixed; top: 15px; left: 50%; transform: translateX(-50%); z-index: 9999; margin: 0;">
+            @TempData["ErrorMessage"]
+        </div>
     }
 
     <!-- HEADER -->
@@ -38,15 +38,15 @@
             <div class="auth-links">
                 @if (User.Identity?.IsAuthenticated == true)
                 {
-                <a href="@Url.Action("Profile", "User")" class="auth-link">Profile</a>
-                <form id="logoutForm" method="post" action="@Url.Action("Logout", "Identity")" style="display: inline;">
-                    @Html.AntiForgeryToken()
-                    <button type="submit" class="auth-link logout-link">Logout</button>
-                </form>
+                    <a href="@Url.Action("Profile", "User")" class="auth-link">Profile</a>
+                    <form id="logoutForm" method="post" action="@Url.Action("Logout", "Identity")" style="display: inline;">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="auth-link logout-link">Logout</button>
+                    </form>
                 }
                 else
                 {
-                <a href="@Url.Action("Login", "Identity")" class="auth-link">Sign In</a>
+                    <a href="@Url.Action("Login", "Identity")" class="auth-link">Sign In</a>
                 }
             </div>
         </div>
@@ -56,28 +56,28 @@
     <aside class="sidebar" id="sidebar">
         @if (User.Identity?.IsAuthenticated == true)
         {
-        <ul>
-            <li>
-                <a href="@Url.Action("Index", "User")">
-                    <i class="fas fa-user"></i> <span>Users</span>
-                </a>
-            </li>
-            <li>
-                <a href="@Url.Action("Index", "Role")">
-                    <i class="fas fa-user-shield"></i> <span>Roles</span>
-                </a>
-            </li>
-            <li>
-                <a href="@Url.Action("Index", "UserRole")">
-                    <i class="fas fa-user-tag"></i> <span>UserRoles</span>
-                </a>
-            </li>
-            <li>
-                <a href="@Url.Action("Index", "Product")">
-                    <i class="fas fa-box"></i> <span>Products</span>
-                </a>
-            </li>
-        </ul>
+            <ul>
+                <li>
+                    <a href="@Url.Action("Index", "User")">
+                        <i class="fas fa-user"></i> <span>Users</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index", "Role")">
+                        <i class="fas fa-user-shield"></i> <span>Roles</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index", "UserRole")">
+                        <i class="fas fa-user-tag"></i> <span>UserRoles</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index", "Product")">
+                        <i class="fas fa-box"></i> <span>Products</span>
+                    </a>
+                </li>
+            </ul>
         }
     </aside>
 

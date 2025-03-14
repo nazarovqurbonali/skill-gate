@@ -89,9 +89,9 @@ public sealed class UserRepository(
 
         AddCondition("first_name", "FirstName", filter.FirstName);
         AddCondition("last_name", "LastName", filter.LastName);
-        AddCondition("email", "Email", filter.Email, useLike: false);
-        AddCondition("phone_number", "PhoneNumber", filter.PhoneNumber, useLike: false);
-        AddCondition("user_name", "UserName", filter.UserName, useLike: false);
+        AddCondition("email", "Email", filter.Email);
+        AddCondition("phone_number", "PhoneNumber", filter.PhoneNumber);
+        AddCondition("user_name", "UserName", filter.UserName);
 
         if (conditions.Any())
             query += " WHERE " + string.Join(" AND ", conditions);
@@ -264,7 +264,7 @@ public sealed class UserRepository(
 
             List<Claim> claims =
             [
-                new(CustomClaimTypes.Id, user.ToString() ?? ""),
+                new(CustomClaimTypes.Id, user.Id.ToString()),
                 new(CustomClaimTypes.UserName, user.UserName),
                 new(CustomClaimTypes.Email, user.Email),
                 new(CustomClaimTypes.Phone, user.PhoneNumber),

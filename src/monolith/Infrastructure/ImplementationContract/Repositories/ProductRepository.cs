@@ -93,9 +93,7 @@ public sealed class ProductRepository(
         }
 
         AddCondition("name", "Name", filter.Name);
-        AddCondition("price", "Price", filter.Price.ToString());
         AddCondition("description", "Description", filter.Description);
-        AddCondition("stock_quantity", "StockQuantity", filter.StockQuantity.ToString());
 
         if (conditions.Any())
             query += " WHERE " + string.Join(" AND ", conditions);
@@ -135,9 +133,7 @@ public sealed class ProductRepository(
 
             AddCondition("name", "RoleName", filter.Name);
             AddCondition("description", "Description", filter.Description);
-            AddCondition("stock_quantity", "StockQuantity", filter.StockQuantity.ToString(),false);
-            AddCondition("price", "Price", filter.Price.ToString(),false);
-
+          
             if (conditions.Any())
             {
                 query += " WHERE " + string.Join(" AND ", conditions);

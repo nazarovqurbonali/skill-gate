@@ -66,36 +66,13 @@ public sealed class UserRoleRepository(
         CancellationToken token = default)
     {
         string query = UserRoleNpgsqlCommands.GetAllUserRoles;
-        List<string> conditions = [];
-        List<NpgsqlParameter> parameters = [];
-
-        void AddCondition(string column, string paramName, string? value, bool useLike = true)
-        {
-            if (string.IsNullOrWhiteSpace(value)) return;
-
-            if (useLike)
-            {
-                conditions.Add($"{column} ILIKE @{paramName}");
-                parameters.Add(new NpgsqlParameter(paramName, $"%{value}%"));
-            }
-            else
-            {
-                conditions.Add($"{column} = @{paramName}");
-                parameters.Add(new NpgsqlParameter(paramName, value));
-            }
-        }
-
-        AddCondition("role_id", "RoleId", filter.RoleId.ToString(), false);
-        AddCondition("user_id", "UserId", filter.UserId.ToString(), false);
-
-        if (conditions.Any())
-            query += " WHERE " + string.Join(" AND ", conditions);
+       
         
         int offset = (filter.PageNumber - 1) * filter.PageSize;
         query += $" LIMIT {filter.PageSize} OFFSET {offset}";
         
         return await ExecuteQueryListAsync(query,
-            (cmd) => { cmd.Parameters.AddRange(parameters.ToArray()); }, token);
+            (_) => { }, token);
     }
 
     public async Task<Result<int>> GetCountAsync(UserRoleFilter filter, CancellationToken token = default)
@@ -105,34 +82,7 @@ public sealed class UserRoleRepository(
         try
         {
             string query = UserRoleNpgsqlCommands.GetCountUserRoles;
-            List<string> conditions = [];
-            List<NpgsqlParameter> parameters = [];
-
-            void AddCondition(string column, string paramName, string? value, bool useLike = true)
-            {
-                if (string.IsNullOrWhiteSpace(value)) return;
-
-                if (useLike)
-                {
-                    conditions.Add($"{column} ILIKE @{paramName}");
-                    parameters.Add(new(paramName, $"%{value}%"));
-                }
-                else
-                {
-                    conditions.Add($"{column} = @{paramName}");
-                    parameters.Add(new(paramName, value));
-                }
-            }
-
-            AddCondition("user_id", "UserId", filter.UserId.ToString(), false);
-            AddCondition("role_id", "RoleId", filter.RoleId.ToString(), false);
-
-            if (conditions.Any())
-            {
-                query += " WHERE " + string.Join(" AND ", conditions);
-            }
-
-            command.Parameters.AddRange(parameters.ToArray());
+            
             command.CommandText = query;
             int result = Convert.ToInt32(await command.ExecuteScalarAsync(token));
 
