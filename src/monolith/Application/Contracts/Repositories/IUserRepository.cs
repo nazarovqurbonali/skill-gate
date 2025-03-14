@@ -8,4 +8,6 @@ public interface IUserRepository : IGenericRepository<User>
     Task<Result<bool>> CheckToLoginAsync(LoginRequest request, CancellationToken token = default);
     Task<Result<ClaimsPrincipal>> GetUserByCredentialsAsync(LoginRequest request, CancellationToken token = default);
     Task<Result<bool>> CheckToUniqueUserAsync(User request, CancellationToken token=default);
+    Task<Result<int>> GetCountAsync(UserFilter filter, CancellationToken token = default);
+
 }

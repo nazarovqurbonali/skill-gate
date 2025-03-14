@@ -10,6 +10,10 @@ public static class UserRoleNpgsqlCommands
             @Id, @UserId, @RoleId, @Status, @CreatedAt, @CreatedBy, @CreatedByIp
         )";
 
+    public const string GetCountUserRoles = @"
+        SELECT COUNT(*) FROM user_roles";
+
+
     public const string UpdateUserRole = @"
         UPDATE user_roles
         SET 

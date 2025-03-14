@@ -12,10 +12,14 @@ public sealed class ProductService(
             Result<IEnumerable<Product>> products = await productRepository.GetAllAsync(filter, token);
             if (!products.IsSuccess)
                 return Result<PagedResponse<IEnumerable<Product>>>.Failure(products.Error);
-
+            
+            Result<int> count = await productRepository.GetCountAsync(filter, token);
+            if (!count.IsSuccess)
+                return Result<PagedResponse<IEnumerable<Product>>>.Failure(count.Error);
+            
             PagedResponse<IEnumerable<Product>> response =
                 PagedResponse<IEnumerable<Product>>
-                    .Create(filter.PageSize, filter.PageNumber, products.Value!.Count(), products.Value);
+                    .Create(filter.PageSize, filter.PageNumber, count.Value, products.Value);
             return Result<PagedResponse<IEnumerable<Product>>>.Success(response);
         }
         catch (Exception ex)

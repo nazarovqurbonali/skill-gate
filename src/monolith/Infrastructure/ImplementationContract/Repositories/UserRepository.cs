@@ -306,4 +306,52 @@ public sealed class UserRepository(
         }
     }
 
+    public async Task<Result<int>> GetCountAsync(UserFilter filter, CancellationToken token = default)
+    {
+        await using NpgsqlConnection connection = await DbExtensions.CreateConnectionAsync(_connectionString);
+        await using NpgsqlCommand command = connection.CreateCommand();
+        try
+        {
+            string query = UserNpgsqlCommands.GetCountUsers;
+            List<string> conditions = [];
+            List<NpgsqlParameter> parameters = [];
+
+            void AddCondition(string column, string paramName, string? value, bool useLike = true)
+            {
+                if (string.IsNullOrWhiteSpace(value)) return;
+
+                if (useLike)
+                {
+                    conditions.Add($"{column} ILIKE @{paramName}");
+                    parameters.Add(new(paramName, $"%{value}%"));
+                }
+                else
+                {
+                    conditions.Add($"{column} = @{paramName}");
+                    parameters.Add(new(paramName, value));
+                }
+            }
+
+            AddCondition("first_name", "FirstName", filter.FirstName);
+            AddCondition("last_name", "LastName", filter.LastName);
+            AddCondition("user_name", "UserName", filter.UserName);
+            AddCondition("email", "Email", filter.Email);
+            AddCondition("phone_number", "PhoneNumber", filter.PhoneNumber);
+           
+            if (conditions.Any())
+            {
+                query += " WHERE " + string.Join(" AND ", conditions);
+            }
+
+            command.Parameters.AddRange(parameters.ToArray());
+            command.CommandText = query;
+            int result = Convert.ToInt32(await command.ExecuteScalarAsync(token));
+
+            return Result<int>.Success(result);
+        }
+        catch (Exception e)
+        {
+            return Result<int>.Failure(ResultPatternError.InternalServerError(e.Message));
+        }
+    }
 }

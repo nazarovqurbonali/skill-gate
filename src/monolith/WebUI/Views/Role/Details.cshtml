@@ -1,0 +1,144 @@
+@model Role
+@using Domain.Constants
+
+@{
+ViewData["Title"] = "Role Details";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0">
+                    <h3 class="card-title mb-0">Role Details: @Model.Name</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5 class="text-muted">General Information</h5>
+                        <hr class="mt-1 mb-3" />
+                        <p><strong>Description:</strong> @Model.Description</p>
+                        <p><strong>Role Key:</strong> @Model.RoleKey</p>
+                    </div>
+
+                    <!-- Проверка роли пользователя -->
+                    @if (User.IsInRole(Roles.Admin))
+                    {
+                    <div class="mb-4">
+                        <h5 class="text-muted">Admin Information</h5>
+                        <hr class="mt-1 mb-3" />
+                        <p><strong>Created At:</strong> @Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</p>
+                        <p><strong>Created By:</strong> @Model.CreatedBy</p>
+                        <p><strong>Created By IP:</strong> @Model.CreatedByIp</p>
+
+                        @if (Model.UpdatedAt.HasValue)
+                        {
+                        <p><strong>Updated At:</strong> @Model.UpdatedAt.Value.ToString("yyyy-MM-dd HH:mm")</p>
+                        <p><strong>Updated By:</strong> @Model.UpdatedBy</p>
+                        <p><strong>Updated By IP:</strong> @Model.UpdatedByIp</p>
+                        }
+
+                        @if (Model.DeletedAt.HasValue)
+                        {
+                        <p><strong>Deleted At:</strong> @Model.DeletedAt.Value.ToString("yyyy-MM-dd HH:mm")</p>
+                        <p><strong>Deleted By:</strong> @Model.DeletedBy</p>
+                        <p><strong>Deleted By IP:</strong> @Model.DeletedByIp</p>
+                        }
+                    </div>
+                    }
+                </div>
+                <div class="card-footer bg-white border-0 d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to List
+                    </a>
+
+                    <!-- Кнопки Edit и Delete для администраторов -->
+                    @if (User.IsInRole(Roles.Admin))
+                    {
+                    <div>
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary me-2">
+                            <i class="fas fa-edit me-2"></i>Edit
+                        </a>
+                        <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this role?');">
+                                <i class="fas fa-trash-alt me-2"></i>Delete
+                            </button>
+                        </form>
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Подключение FontAwesome для иконок -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<!-- Кастомные стили -->
+<style>
+    .card {
+        border-radius: 8px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        background-color: #fff;
+        padding: 1.5rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .card-title {
+        font-size: 1.75rem;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .card-footer {
+        background-color: #fff;
+        padding: 1.5rem;
+        border-top: 1px solid #e9ecef;
+    }
+
+    .btn-outline-secondary {
+        border-radius: 5px;
+        padding: 0.5rem 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-outline-secondary:hover {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004085;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border-color: #dc3545;
+        transition: all 0.3s ease;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+        border-color: #bd2130;
+    }
+</style>

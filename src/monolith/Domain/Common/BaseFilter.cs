@@ -8,12 +8,12 @@ public abstract class BaseFilter
     protected BaseFilter()
     {
         PageNumber = 1;
-        PageSize = 10;
+        PageSize = 3;
     }
 
     protected BaseFilter(int pageSize, int pageNumber)
     {
-        PageSize = pageSize <= 0 ? 10 : pageSize;
+        PageSize = pageSize <= 0 ? 3 : pageSize;
         PageNumber = pageNumber <= 0 ? 1 : pageNumber;
     }
 }

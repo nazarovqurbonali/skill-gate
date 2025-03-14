@@ -13,9 +13,13 @@ public sealed class UserRoleService(
             if (!userRoles.IsSuccess)
                 return Result<PagedResponse<IEnumerable<UserRole>>>.Failure(userRoles.Error);
 
+            Result<int> count = await userRoleRepository.GetCountAsync(filter, token);
+            if (!count.IsSuccess)
+                return Result<PagedResponse<IEnumerable<UserRole>>>.Failure(count.Error);
+            
             PagedResponse<IEnumerable<UserRole>> response =
                 PagedResponse<IEnumerable<UserRole>>
-                    .Create(filter.PageSize, filter.PageNumber, userRoles.Value!.Count(), userRoles.Value);
+                    .Create(filter.PageSize, filter.PageNumber, count.Value, userRoles.Value);
             return Result<PagedResponse<IEnumerable<UserRole>>>.Success(response);
         }
         catch (Exception ex)

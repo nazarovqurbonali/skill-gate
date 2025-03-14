@@ -95,6 +95,52 @@ public sealed class UserRoleRepository(
             (cmd) => { cmd.Parameters.AddRange(parameters.ToArray()); }, token);
     }
 
+    public async Task<Result<int>> GetCountAsync(UserRoleFilter filter, CancellationToken token = default)
+    {
+        await using NpgsqlConnection connection = await DbExtensions.CreateConnectionAsync(_connectionString);
+        await using NpgsqlCommand command = connection.CreateCommand();
+        try
+        {
+            string query = UserNpgsqlCommands.GetCountUsers;
+            List<string> conditions = [];
+            List<NpgsqlParameter> parameters = [];
+
+            void AddCondition(string column, string paramName, string? value, bool useLike = true)
+            {
+                if (string.IsNullOrWhiteSpace(value)) return;
+
+                if (useLike)
+                {
+                    conditions.Add($"{column} ILIKE @{paramName}");
+                    parameters.Add(new(paramName, $"%{value}%"));
+                }
+                else
+                {
+                    conditions.Add($"{column} = @{paramName}");
+                    parameters.Add(new(paramName, value));
+                }
+            }
+
+            AddCondition("user_id", "UserId", filter.UserId.ToString(), false);
+            AddCondition("role_id", "RoleId", filter.RoleId.ToString(), false);
+
+            if (conditions.Any())
+            {
+                query += " WHERE " + string.Join(" AND ", conditions);
+            }
+
+            command.Parameters.AddRange(parameters.ToArray());
+            command.CommandText = query;
+            int result = Convert.ToInt32(await command.ExecuteScalarAsync(token));
+
+            return Result<int>.Success(result);
+        }
+        catch (Exception e)
+        {
+            return Result<int>.Failure(ResultPatternError.InternalServerError(e.Message));
+        }
+    }
+
     public async Task<Result<int>> DeleteAsync(Guid id, CancellationToken token = default)
         => await ExecuteNonQueryTransactionAsync(UserRoleNpgsqlCommands.DeleteUserRoleById,
             cmd => cmd.Parameters.AddWithValue("@Id", id), token);

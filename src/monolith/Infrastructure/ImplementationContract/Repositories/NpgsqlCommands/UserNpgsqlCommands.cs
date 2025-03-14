@@ -54,6 +54,9 @@ public static class UserNpgsqlCommands
            OR phone_number = @Login
            OR email = @Login) 
           AND password_hash = @Password)";
+    public const string GetCountUsers = @"
+        SELECT COUNT(*) FROM users";
+
     
     public const string GetUserWithRolesByCredentials = @"
     SELECT 

@@ -13,9 +13,13 @@ public sealed class RoleService(
             if (!roles.IsSuccess)
                 return Result<PagedResponse<IEnumerable<Role>>>.Failure(roles.Error);
 
+            Result<int> count = await roleRepository.GetCountAsync(filter, token);
+            if (!count.IsSuccess)
+                return Result<PagedResponse<IEnumerable<Role>>>.Failure(count.Error);
+            
             PagedResponse<IEnumerable<Role>> response =
                 PagedResponse<IEnumerable<Role>>
-                    .Create(filter.PageSize, filter.PageNumber, roles.Value!.Count(), roles.Value);
+                    .Create(filter.PageSize, filter.PageNumber, count.Value, roles.Value);
             return Result<PagedResponse<IEnumerable<Role>>>.Success(response);
         }
         catch (Exception ex)

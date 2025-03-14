@@ -67,7 +67,7 @@ public sealed class RoleRepository(
 
     public async Task<Result<IEnumerable<Role>>> GetAllAsync(CancellationToken token = default)
         => await ExecuteQueryListAsync(RoleNpgsqlCommands.GetAllRoles, _ => { }, token);
-    
+
     private async Task<Result<int>> ExecuteNonQueryTransactionAsync(string query,
         Action<NpgsqlCommand> configureCommand, CancellationToken token)
     {
@@ -144,7 +144,7 @@ public sealed class RoleRepository(
             if (useLike)
             {
                 conditions.Add($"{column} ILIKE @{paramName}");
-                parameters.Add(new (paramName, $"%{value}%"));
+                parameters.Add(new(paramName, $"%{value}%"));
             }
             else
             {
@@ -153,7 +153,7 @@ public sealed class RoleRepository(
             }
         }
 
-        AddCondition("role_name", "RoleName", filter.Name);
+        AddCondition("name", "RoleName", filter.Name);
         AddCondition("description", "Description", filter.Description);
         AddCondition("role_key", "RoleKey", filter.Keyword);
 
@@ -161,6 +161,9 @@ public sealed class RoleRepository(
         {
             query += " WHERE " + string.Join(" AND ", conditions);
         }
+
+        int offset = (filter.PageNumber - 1) * filter.PageSize;
+        query += $" LIMIT {filter.PageSize} OFFSET {offset}";
 
         return await ExecuteQueryListAsync(query,
             (cmd) => { cmd.Parameters.AddRange(parameters.ToArray()); }, token);
@@ -187,6 +190,53 @@ public sealed class RoleRepository(
         {
             logger.LogError(e, "Failed to execute query.");
             return Result<bool>.Failure(ResultPatternError.InternalServerError(e.Message));
+        }
+    }
+
+    public async Task<Result<int>> GetCountAsync(RoleFilter filter, CancellationToken token = default)
+    {
+        await using NpgsqlConnection connection = await DbExtensions.CreateConnectionAsync(_connectionString);
+        await using NpgsqlCommand command = connection.CreateCommand();
+        try
+        {
+            string query = RoleNpgsqlCommands.GetCountRoles;
+            List<string> conditions = [];
+            List<NpgsqlParameter> parameters = [];
+
+            void AddCondition(string column, string paramName, string? value, bool useLike = true)
+            {
+                if (string.IsNullOrWhiteSpace(value)) return;
+
+                if (useLike)
+                {
+                    conditions.Add($"{column} ILIKE @{paramName}");
+                    parameters.Add(new(paramName, $"%{value}%"));
+                }
+                else
+                {
+                    conditions.Add($"{column} = @{paramName}");
+                    parameters.Add(new(paramName, value));
+                }
+            }
+
+            AddCondition("name", "RoleName", filter.Name);
+            AddCondition("description", "Description", filter.Description);
+            AddCondition("role_key", "RoleKey", filter.Keyword);
+
+            if (conditions.Any())
+            {
+                query += " WHERE " + string.Join(" AND ", conditions);
+            }
+
+            command.Parameters.AddRange(parameters.ToArray());
+            command.CommandText = query;
+            int result = Convert.ToInt32(await command.ExecuteScalarAsync(token));
+
+            return Result<int>.Success(result);
+        }
+        catch (Exception e)
+        {
+            return Result<int>.Failure(ResultPatternError.InternalServerError(e.Message));
         }
     }
 }

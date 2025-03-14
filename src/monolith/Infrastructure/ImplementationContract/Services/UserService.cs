@@ -14,9 +14,13 @@ public sealed class UserService(
             if (!users.IsSuccess)
                 return Result<PagedResponse<IEnumerable<User>>>.Failure(users.Error);
 
+            Result<int> count = await userRepository.GetCountAsync(filter, token);
+            if (!count.IsSuccess)
+                return Result<PagedResponse<IEnumerable<User>>>.Failure(count.Error);
+            
             PagedResponse<IEnumerable<User>> response =
                 PagedResponse<IEnumerable<User>>
-                    .Create(filter.PageSize, filter.PageNumber, users.Value!.Count(), users.Value);
+                    .Create(filter.PageSize, filter.PageNumber, count.Value, users.Value);
             return Result<PagedResponse<IEnumerable<User>>>.Success(response);
         }
         catch (Exception ex)

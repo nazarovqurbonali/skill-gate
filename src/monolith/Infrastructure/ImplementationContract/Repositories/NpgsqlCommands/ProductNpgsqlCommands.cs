@@ -11,6 +11,9 @@ public static class ProductNpgsqlCommands
             @Id, @Name, @Description, @Price, @StockQuantity, @ImageUrl, 
             @Status, @CreatedAt, @CreatedBy, @CreatedByIp
         )";
+    public const string GetCountProducts = @"
+        SELECT COUNT(*) FROM products";
+
 
     public const string UpdateProduct = @"
         UPDATE products

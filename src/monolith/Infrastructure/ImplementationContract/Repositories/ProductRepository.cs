@@ -104,6 +104,54 @@ public sealed class ProductRepository(
             (cmd) => { cmd.Parameters.AddRange(parameters.ToArray()); }, token);
     }
 
+    public async Task<Result<int>> GetCountAsync(ProductFilter filter, CancellationToken token = default)
+    {
+        await using NpgsqlConnection connection = await DbExtensions.CreateConnectionAsync(_connectionString);
+        await using NpgsqlCommand command = connection.CreateCommand();
+        try
+        {
+            string query = ProductNpgsqlCommands.GetCountProducts;
+            List<string> conditions = [];
+            List<NpgsqlParameter> parameters = [];
+
+            void AddCondition(string column, string paramName, string? value, bool useLike = true)
+            {
+                if (string.IsNullOrWhiteSpace(value)) return;
+
+                if (useLike)
+                {
+                    conditions.Add($"{column} ILIKE @{paramName}");
+                    parameters.Add(new(paramName, $"%{value}%"));
+                }
+                else
+                {
+                    conditions.Add($"{column} = @{paramName}");
+                    parameters.Add(new(paramName, value));
+                }
+            }
+
+            AddCondition("name", "RoleName", filter.Name);
+            AddCondition("description", "Description", filter.Description);
+            AddCondition("stock_quantity", "StockQuantity", filter.StockQuantity.ToString(),false);
+            AddCondition("price", "Price", filter.Price.ToString(),false);
+
+            if (conditions.Any())
+            {
+                query += " WHERE " + string.Join(" AND ", conditions);
+            }
+
+            command.Parameters.AddRange(parameters.ToArray());
+            command.CommandText = query;
+            int result = Convert.ToInt32(await command.ExecuteScalarAsync(token));
+
+            return Result<int>.Success(result);
+        }
+        catch (Exception e)
+        {
+            return Result<int>.Failure(ResultPatternError.InternalServerError(e.Message));
+        }
+    }
+
 
     private async Task<Result<int>> ExecuteNonQueryTransactionAsync(string query,
         Action<NpgsqlCommand> configureCommand, CancellationToken token)

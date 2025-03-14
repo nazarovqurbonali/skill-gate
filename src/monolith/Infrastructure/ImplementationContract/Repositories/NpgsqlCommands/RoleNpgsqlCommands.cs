@@ -34,6 +34,8 @@ public static class RoleNpgsqlCommands
 
     public const string GetAllRoles = @"
         SELECT * FROM roles";
+    public const string GetCountRoles = @"
+        SELECT COUNT(*) FROM roles";
 
     public const string GetRoleByName = @"
             SELECT * 
