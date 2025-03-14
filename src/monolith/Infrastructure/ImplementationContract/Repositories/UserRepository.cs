@@ -96,6 +96,9 @@ public sealed class UserRepository(
         if (conditions.Any())
             query += " WHERE " + string.Join(" AND ", conditions);
 
+        int offset = (filter.PageNumber - 1) * filter.PageSize;
+        query += $" LIMIT {filter.PageSize} OFFSET {offset}";
+        
         return await ExecuteQueryListAsync(query,
             (cmd) => { cmd.Parameters.AddRange(parameters.ToArray()); }, token);
     }

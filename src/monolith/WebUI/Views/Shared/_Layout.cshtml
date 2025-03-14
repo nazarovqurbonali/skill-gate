@@ -38,7 +38,7 @@
             <div class="auth-links">
                 @if (User.Identity?.IsAuthenticated == true)
                 {
-                <a href="@Url.Action("Profile", "Account")" class="auth-link">Profile</a>
+                <a href="@Url.Action("Profile", "User")" class="auth-link">Profile</a>
                 <form id="logoutForm" method="post" action="@Url.Action("Logout", "Identity")" style="display: inline;">
                     @Html.AntiForgeryToken()
                     <button type="submit" class="auth-link logout-link">Logout</button>
@@ -58,7 +58,7 @@
         {
         <ul>
             <li>
-                <a href="@Url.Action("Index", "Users")">
+                <a href="@Url.Action("Index", "User")">
                     <i class="fas fa-user"></i> <span>Users</span>
                 </a>
             </li>
@@ -68,7 +68,7 @@
                 </a>
             </li>
             <li>
-                <a href="@Url.Action("Index", "UserRoles")">
+                <a href="@Url.Action("Index", "UserRole")">
                     <i class="fas fa-user-tag"></i> <span>UserRoles</span>
                 </a>
             </li>
