@@ -1,7 +1,7 @@
 namespace WebUI.Infrastructure.DI;
 public static class EmailRegister
 {
-    public static WebApplicationBuilder AddEmailService(this WebApplicationBuilder builder)
+    public static WebApplicationBuilder AddEmailServices(this WebApplicationBuilder builder)
     {
         EmailConfig emailConfig = builder.Configuration
             .GetSection("EmailConfiguration")

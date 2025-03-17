@@ -2,6 +2,7 @@ namespace Application.Extensions.ResultPattern;
 
 public sealed class Result<T> : BaseResult
 {
+    
     public T? Value { get; init; }
 
     private Result(bool isSuccess, ResultPatternError error, T? value) : base(isSuccess, error)

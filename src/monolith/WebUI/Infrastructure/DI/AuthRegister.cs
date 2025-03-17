@@ -2,7 +2,7 @@ namespace WebUI.Infrastructure.DI;
 
 public static class AuthRegister
 {
-    public static WebApplicationBuilder AddAuthService(this WebApplicationBuilder builder)
+    public static WebApplicationBuilder AddAuthServices(this WebApplicationBuilder builder)
     {
         builder.Services
             .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

@@ -2,7 +2,7 @@ namespace WebUI.Infrastructure.DI;
 
 public static class HttpRegister
 {
-    public static WebApplicationBuilder AddHttpService(this WebApplicationBuilder builder)
+    public static WebApplicationBuilder AddHttpServices(this WebApplicationBuilder builder)
     {
         builder.Services.AddHttpClient();
         builder.Services.AddHttpContextAccessor();

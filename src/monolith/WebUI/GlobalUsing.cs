@@ -1,11 +1,14 @@
 global using WebUI.Models;
 global using Domain.Entities;
 global using MailKit.Net.Smtp;
+global using Domain.Constants;
 global using System.Diagnostics;
 global using WebUI.Infrastructure.DI;
 global using Microsoft.AspNetCore.Mvc;
 global using Bootstrapper.Extensions.DI;
 global using Application.Extensions.Smtp;
+global using Application.Extensions.File;
+global using Microsoft.Extensions.Options;
 global using Application.Extensions.Filters;
 global using Application.Contracts.Services;
 global using Infrastructure.DataAccess.Seed;

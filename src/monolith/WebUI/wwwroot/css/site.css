@@ -53,8 +53,7 @@ header {
 .theme-toggle {
   cursor: pointer;
   margin-right: 20px;
-  font-size: 1.8em;
-  padding: 8px;
+  font-size: 1.6em;
   border: none;
   background: rgba(255,255,255,0.2);
   border-radius: 50%;

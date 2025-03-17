@@ -4,9 +4,10 @@ public static class RegisterServices
 {
     public static WebApplicationBuilder AddServices(this WebApplicationBuilder builder)
     {
-        builder.AddHttpService();
-        builder.AddAuthService();
-        builder.AddEmailService();
+        builder.AddFileServices();
+        builder.AddHttpServices();
+        builder.AddAuthServices();
+        builder.AddEmailServices();
         builder.Services.AddProblemDetails();
         builder.Services.AddCustomServices();
         builder.Services.AddControllersWithViews();
